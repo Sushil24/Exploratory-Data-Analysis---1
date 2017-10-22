@@ -1,0 +1,20 @@
+##data acquisition and cleaning
+
+master<- read.table("household_power_consumption.txt", header=TRUE, sep=";",stringsAsFactors = FALSE,dec = ".")
+master$Date<- as.character(master$Date)
+active<- subset(master, master$Date==c("1/2/2007","2/2/2007"))
+active$Global_active_power<- as.numeric(active$Global_active_power)
+active$Date<-as.Date(active$Date, "%d/%m/%Y")
+date1<- paste(active$Date, active$Time, sep=" ")
+new_date<- strptime(date1,"%Y-%m-%d %H:%M:%S")
+active$Sub_metering_1<- as.numeric(active$Sub_metering_1)
+active$Sub_metering_2<- as.numeric(active$Sub_metering_2)
+active$Sub_metering_3<- as.numeric(active$Sub_metering_3)
+##Plotting and copying to graphic device
+par(mfrow=c(1,1))
+plot(new_date,active$Sub_metering_1, type="l", xlab="", ylab = "Energy Sub metering")
+lines(new_date,active$Sub_metering_2, type="l", col= "red")
+lines(new_date,active$Sub_metering_3, type="l", col= "blue")
+legend("topright", c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), lty=1,lwd = 2,col = c("black","red","blue"))
+dev.copy(png,"plot3.png")
+dev.off()
